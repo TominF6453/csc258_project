@@ -11,5 +11,5 @@ module centisecond_rate_divider(
         .clock(clock),
         .cycle_amt(32'd500_000),
         .out_pulse(out_pulse));
-
+    
 endmodule
