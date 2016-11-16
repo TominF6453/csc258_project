@@ -1,7 +1,7 @@
-module hex_decoder(hex_digit, segments);
-    input [3:0] hex_digit;
-    output reg [6:0] segments;
-   
+module hex_decoder(
+    input [3:0] hex_digit, 
+    output reg [6:0] segments);
+
     always @(*)
         case (hex_digit)
             4'h0: segments = 7'b100_0000;
