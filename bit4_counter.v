@@ -18,7 +18,7 @@ module bit4_counter(
     always @(posedge in_pulse) begin
         counter <= (counter + 1);
         if (counter == 0)
-            counter <= twos_comp;
+            counter <= {0, cycle_amt} + 1;
     end
 
     // Positive value of the current value
@@ -26,4 +26,5 @@ module bit4_counter(
 
     // Out pulse should be 1 when counter is all zero 
     assign out_pulse = &(~counter);
+    
 endmodule

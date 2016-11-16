@@ -12,7 +12,7 @@ module bit32_rate_divider(
     always @(posedge clock) begin
 		counter <= (counter + 1);
 		if (counter == 0)
-			counter <= twos_comp;
+			counter <= {0, cycle_amt} + 1;
     end
 
     // Out pulse should be 1 when counter is all zero 
