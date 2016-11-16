@@ -13,5 +13,4 @@ module six_counter(
 		.start(4'd6),
 		.out_pulse(out_pulse),
 		.pos_value(cur_value));
-    
 endmodule
