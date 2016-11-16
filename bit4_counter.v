@@ -1,17 +1,29 @@
-/*Counter that resets once it hits max_amt. Increments on posedge of in_pulse.*/
+/*Counter that resets once it hits 0 from negative start. 
+When it resets, also sends out a pulse on out_pulse.
+Also outputs its current value (in two's complement for the positive form).
+Increments on the posedge of in_pulse
+*/
 module bit4_counter(
     input in_pulse,
-    input [3:0] max_amt,
-    output reg [3:0] cur_value);
+    input [3:0] start,
+    output out_pulse,
+    output [3:0] pos_value);
 
-    // Value of the counter (start at 0)
-    cur_value = 4'd0;
+    // Cycle amt must be the 2's complement of the number of bits we are counting to
+    // Concatenate a 0 onto the front to be safe
+    // Value of the counter (start at twos_comp)
+    reg [4:0] counter = ~{0, start} + 1;
 
     // Increment the value of the counter at every clock edge
     always @(posedge in_pulse) begin
-		cur_value <= (cur_value + 1);
-		if (cur_value == max_amt)
-			counter <= 4'd0;
+        counter <= (counter + 1);
+        if (counter == 0)
+            counter <= twos_comp;
     end
-    
+
+    // Positive value of the current value
+    assign pos_value = (~counter + 1)[];
+
+    // Out pulse should be 1 when counter is all zero 
+    assign out_pulse = &(~counter);
 endmodule
