@@ -4,6 +4,7 @@ Also outputs its current value (in two's complement for the positive form).
 Increments on the posedge of in_pulse.
 */
 module bit4_counter(
+    input enable,
     input in_pulse,
     input [3:0] start,
     output out_pulse,
@@ -19,9 +20,10 @@ module bit4_counter(
 
     // Increment the value of the counter at every clock edge
     always @(posedge in_pulse) begin
-        counter <= (counter + 1);
-        if (counter == 0)
-            counter <= twos_comp;
+        if (enable)
+            counter <= (counter + 1);
+            if (counter == 0)
+                counter <= twos_comp;
     end
 
     wire [4:0] abs_val = ~counter[4:0] + 1;

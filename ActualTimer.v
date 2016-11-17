@@ -1,6 +1,7 @@
 `include "AbstractConventionalTimer.v"
 
 module ActualTimer(
+    input [9:0] SW,
     input CLOCK_50,
     output [6:0] HEX4,
     output [6:0] HEX3,
@@ -9,6 +10,7 @@ module ActualTimer(
     output [6:0] HEX0);
 
 	AbstractConventionalTimer ActTimer(
+        .enable(SW[0]),
 		.clock(CLOCK_50),
     	.HEXfour(HEX4),
     	.HEXthree(HEX3),
