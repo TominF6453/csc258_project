@@ -14,6 +14,6 @@ module ActualTimer(
     	.HEXthree(HEX3),
     	.HEXtwo(HEX2),
     	.HEXone(HEX1),
-    	.HEXzero(HEX0);
+    	.HEXzero(HEX0));
     
 endmodule
