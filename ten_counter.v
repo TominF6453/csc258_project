@@ -12,7 +12,7 @@ module ten_counter(
 	bit4_counter ctr (
 		.enable(enable),
 		.in_pulse(in_pulse),
-		.start(4'd10),
+		.start(4'd9),
 		.out_pulse(out_pulse),
 		.pos_value(cur_value));
     

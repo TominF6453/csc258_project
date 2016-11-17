@@ -12,7 +12,8 @@ module six_counter(
 	bit4_counter ctr (
 		.enable(enable),
 		.in_pulse(in_pulse),
-		.start(4'd6),
+		.start(4'd5),
 		.out_pulse(out_pulse),
 		.pos_value(cur_value));
+
 endmodule

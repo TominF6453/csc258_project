@@ -9,21 +9,21 @@ module bit4_counter(
     input [3:0] start,
     output out_pulse,
     output [3:0] pos_value);
-    
-    wire [4:0] twos_comp = ~{1'b0, start[3:0]} + 1;
 
     // Cycle amt must be the 2's complement of the number of bits we are counting to
     // Concatenate a 0 onto the front to be safe
     // Value of the counter (start at two's complement)
     reg [4:0] counter;
-    initial counter = twos_comp;
+    initial begin 
+        counter = ~{1'b0, start[3:0]} + 1;
+    end
 
     // Increment the value of the counter at every clock edge
     always @(posedge in_pulse) begin
         if (enable)
             counter <= (counter + 1);
             if (counter == 0)
-                counter <= twos_comp;
+                counter <= ~{1'b0, start[3:0]} + 1;
     end
 
     wire [4:0] abs_val = ~counter[4:0] + 1;
