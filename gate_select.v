@@ -3,11 +3,12 @@
 //
 //LEDR[0] - displays the output of the selected gate
 
-module gate_select(SW, LEDR);
+module gate_select(SW, KEY, LEDR);
 	input [9:0] SW;
+	input [3:0] KEY;
 	output [9:0] LEDR;
 
-	abstract_gate_selector AGS1(.in(SW[1:0]),
+	abstract_gate_selector AGS1(.in({~KEY[1],~KEY[0]}),
 								.selection(SW[9:6]),
 								.gate_out(LEDR[0]));
 endmodule
@@ -37,7 +38,7 @@ module abstract_gate_selector(
 				S_T		= 4'd7,
 				S_D		= 4'd8;
 	
-	wire reg result;
+	reg result;
 
 	always @(*)
 	begin: select_table
@@ -61,7 +62,7 @@ module sr_latch(
 	input R,
 	output Q);
 
-	wire reg curstate;
+	reg curstate;
 
 	always @(*)
 	begin: sr
@@ -77,12 +78,12 @@ endmodule
 module t_latch(
 	input T,
 	input clk,
-	output Q);
+	output reg Q);
 
-	wire reg curstate;
+//	reg curstate;
 
 	always @(posedge clk)
-		curstate = T ? ~curstate : curstate;
+		Q <= T ? ~Q : Q;
 
-	assign Q = curstate;
+//	assign Q = curstate;
 endmodule
