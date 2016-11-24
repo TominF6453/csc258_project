@@ -32,6 +32,12 @@ module completion_drawer
 	
 	wire resetn;
 	assign resetn = KEY[0];
+	
+	// Wires
+	wire [9:0] rectX;
+	wire [8:0] rectY;
+	wire writeEn;
+	wire rectDone;
 
 	// Create an Instance of a VGA controller - there can be only one!
 	// Define the number of colours as well as the initial background
@@ -56,12 +62,6 @@ module completion_drawer
 		defparam VGA.MONOCHROME = "FALSE";
 		defparam VGA.BITS_PER_COLOUR_CHANNEL = 1;
 		defparam VGA.BACKGROUND_IMAGE = "Images/UILayout.colour.mif";
-	
-	// Wires
-	wire [9:0] rectX;
-	wire [8:0] rectY;
-	wire writeEn;
-	wire rectDone;
 
 	// We are always coloring in blocks as green (R G B = 0 1 0)
 	assign colour = 3'b010;
@@ -107,8 +107,7 @@ module control(
 
 	reg current_state, next_state;
 
-	localparam  S_LOAD = 1'd0,
-				S_draw_block 1'd1;
+	localparam  S_LOAD = 0, S_draw_block = 1;
 
 	// Next state logic
 	always @(*)
@@ -173,7 +172,7 @@ module control(
 		            default: begin
 		            	x <= 10'd152;
 		            	y <= 10'd226;
-		            end;
+		            end
         		endcase
 			end
 		endcase

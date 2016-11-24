@@ -34,6 +34,12 @@ module signal_drawer
 	
 	wire resetn;
 	assign resetn = KEY[0];
+	
+	// Wires
+	wire [9:0] rectX;
+	wire [8:0] rectY;
+	wire writeEn;
+	wire rectDone;
 
 	// Create an Instance of a VGA controller - there can be only one!
 	// Define the number of colours as well as the initial background
@@ -58,13 +64,6 @@ module signal_drawer
 		defparam VGA.MONOCHROME = "FALSE";
 		defparam VGA.BITS_PER_COLOUR_CHANNEL = 1;
 		defparam VGA.BACKGROUND_IMAGE = "Images/UILayout.colour.mif";
-	
-	// Wires
-	wire [9:0] rectX;
-	wire [8:0] rectY;
-	wire writeEn;
-	wire rectDone;
-
 
 	 // Instantiate FSM control
     control c0(
