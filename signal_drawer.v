@@ -1,4 +1,5 @@
 `include "rectDrawer.v"
+`include "vga_adapter/vga_adapter.v"
 
 module signal_drawer
 	(
@@ -38,6 +39,8 @@ module signal_drawer
 	// Wires
 	wire [9:0] rectX;
 	wire [8:0] rectY;
+	wire [9:0] x;
+	wire [8:0] y;
 	wire writeEn;
 	wire rectDone;
 
@@ -60,10 +63,10 @@ module signal_drawer
 			.VGA_BLANK(VGA_BLANK_N),
 			.VGA_SYNC(VGA_SYNC_N),
 			.VGA_CLK(VGA_CLK));
-		defparam VGA.RESOLUTION = "640x480";
+		defparam VGA.RESOLUTION = "320x240";
 		defparam VGA.MONOCHROME = "FALSE";
 		defparam VGA.BITS_PER_COLOUR_CHANNEL = 1;
-		defparam VGA.BACKGROUND_IMAGE = "Images/UILayout.colour.mif";
+		defparam VGA.BACKGROUND_IMAGE = "image.colour.mif";
 
 	 // Instantiate FSM control
     control c0(

@@ -11,6 +11,7 @@ module ActualTimer(
 
 	AbstractConventionalTimer ActTimer(
         .enable(SW[0]),
+		  .reset(SW[9]),
 		.clock(CLOCK_50),
     	.HEXfour(HEX4),
     	.HEXthree(HEX3),

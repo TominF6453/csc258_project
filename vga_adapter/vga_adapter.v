@@ -74,6 +74,11 @@
  *		   implementation. Also, all settings for the module can be specified from the point
  *		   of instantiation, rather than by modifying the source code. (Tomasz S. Czajkowski)
  */
+ 
+ `include "vga_address_translator.v"
+ `include "vga_controller.v"
+ `include "vga_pll.v"
+ 
 
 module vga_adapter(
 			resetn,
@@ -109,7 +114,7 @@ module vga_adapter(
 	 * to reduce the resolution for the Video Memory to fit within the on-chip memory limits.
 	 */
 	
-	parameter BACKGROUND_IMAGE = "background.mif";
+	parameter BACKGROUND_IMAGE = "UILayout.colour.mif";
 	/* The initial screen displayed when the circuit is first programmed onto the DE2 board can be
 	 * defined useing an MIF file. The file contains the initial colour for each pixel on the screen
 	 * and is placed in the Video Memory (VideoMemory module) upon programming. Note that resetting the

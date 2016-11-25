@@ -1,3 +1,6 @@
+`include "rectDrawer.v"
+`include "vga_adapter/vga_adapter.v"
+
 module completion_drawer
 	(
 		CLOCK_50,						//	On Board 50 MHz
@@ -85,7 +88,7 @@ module completion_drawer
 		.x(rectX),
 		.y(rectY),
 		.width(10'd80),
-		.height(10'd50),
+		.height(9'd50),
 
 		.out_x(x),
 		.out_y(y),
