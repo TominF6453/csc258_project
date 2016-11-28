@@ -1,0 +1,29 @@
+Use an 8-bit value for random generation (via "select" input on clock), gate selection and checking which gates have already been completed.
+
+Our register would hold 00000000.
+
+0-AND -0   - 00000000
+1-OR  -1   - 00000001
+2-XOR -2   - 00000010
+3-NAND-4   - 00000100
+4-NOR -8   - 00001000
+5-NXOR-16  - 00010000
+6-SR  -32  - 00100000
+7-T   -64  - 01000000
+8-D   -128 - 10000000
+
+Swapping selection would be on KEY[2].
+@(negedge KEY2)
+	if selector == 0
+		selector = 1
+	else 
+		selector << 1
+
+Random generation would work the same but with the shifting being on clock
+@(posedge CLOCK50)
+	etc..
+
+When a gate has been completed, a 9bit register would set that gate's index to 1
+
+ie "AND", "NXOR", and "SR" have been completed
+completed = 001100001
