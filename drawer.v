@@ -71,49 +71,62 @@ module part2
 			
 	// Put your code here. Your code should produce signals x,y,colour and writeEn/plot
 	// for the VGA controller, in addition to any other functionality your design may require.
-    
-	wire [5:0] add_x;
-	wire [4:0] add_y;
+
+
 	wire wen;
 
+	// Wires to transfer dimension information to datapath
+	wire [8:0] x_coord_to_dp;
+	wire [8:0] width_x_to_dp;
+	wire [7:0] y_coord_to_dp;
+	wire [7:0] length_y_to_dp;
+
+	// Instansiate FSM control
+    control c0(
+
+		.clk(CLOCK_50),
+		.resetn(resetn),
+		.draw(KEY[2]),
+
+		.wire_inputs(~{KEY[1],KEY[0]}),
+		.gate_num(SW[9:6]),
+
+		.wen(wen),
+		.out_x(x_coord_to_dp),
+		.x_width(width_x_to_dp),
+		.out_y(y_coord_to_dp),
+		.y_length(length_y_to_dp), 
+		.out_color(colour)
+		);
+    
     // Instansiate datapath
 	datapath d0(
 		.clk(CLOCK_50),
 		.resetn(resetn),
-		.data_in(SW[6:0]),
 		.adx(add_x),
 		.ady(add_y),
 		.loadx(KEY[3]),
-		.wen(wen),
 		.out_x(x),
 		.out_y(y),
 		.writeEn(writeEn)
 		);
 
-    // Instansiate FSM control
-    control c0(
-		.clk(CLOCK_50),
-		.resetn(resetn),
-		.draw(KEY[1]),
-		.adx(add_x),
-		.ady(add_y),
-		.wen(wen)
-		);
 endmodule
 
 module control(
 	input clk,
 	input resetn,
 	input draw,
-	
-	input [3:0] block_num,
+
 	input [1:0] wire_inputs,
 	input [3:0] gate_num,
 
+	output reg wen,
 	output reg [8:0] out_x,
+	output reg [8:0] x_width,
 	output reg [7:0] out_y,
-	output reg [2:0] out_color,
-	output reg wen
+	output reg [7:0] y_length, 
+	output reg [2:0] out_color
 	);
 
 	reg [4:0] current_state, next_state;
@@ -138,7 +151,7 @@ module control(
 	end
 	
 	// Wire to transfer result from gate selector
-	wire gate_result
+	wire gate_result;
 	
 	// Instantiating gate selector
 	abstract_gate_selector ags(
@@ -154,7 +167,7 @@ module control(
 	
 	// Instantiating block dimension determination module
 	block_dimensions bd(
-		.block_number(block_num),
+		.block_number(gate_num),
 		
 		.start_x(blockStartX),
 		.width_x(blockXwidth),
@@ -182,12 +195,12 @@ module control(
 	
 	// Instantiating color determination module
 	rect_color rc(
-	
+
 		.is_wire(is_wire),
 		.wire_number(wire_number),
 		.wire_inputs(wire_inputs),
-		
 		.gate_result(gate_result),
+
 		.outcolor(out_color));
 		
 	always @(*)
@@ -205,21 +218,36 @@ module control(
 				wen = 1'b1;
 				is_wire = 1;
 				wire_number = 0;
+				out_x = wireStartX;
+				x_width = wireXwidth;
+				out_y = wireStartY;
+				y_length = wireYLength;
 				end
 			S_DrawIn2:  begin
 				wen = 1'b1;
 				is_wire = 1;
 				wire_number = 1;
+				out_x = wireStartX;
+				x_width = wireXwidth;
+				out_y = wireStartY;
+				y_length = wireYLength;
 				end
 			S_DrawOut: begin
 				wen = 1'b1;
 				is_wire = 1;
 				wire_number = 2;
+				out_x = wireStartX;
+				x_width = wireXwidth;
+				out_y = wireStartY;
+				y_length = wireYLength;
 				end
 			S_DrawBlock: begin
 				wen = 1'b1;
 				is_wire = 0;
-				wire_number = 0;
+				out_x = blockStartX;
+				x_width = blockXwidth;
+				out_y = blockStartY;
+				y_length = blockYLength;
 				end
 		endcase
 	end
@@ -235,45 +263,53 @@ module control(
 endmodule
 
 module datapath(
+
 	input clk,
 	input resetn,
-	input [6:0] data_in,
-	input [5:0] adx,
-	input [4:0] ady,
 	input loadx,
 	input wen,
+
+	input [8:0] in_x,
+	input [8:0] x_width,
+	input [7:0] in_y,
+	input [7:0] y_length, 
+	input [2:0] in_color,
 
 	output reg [8:0] out_x,
 	output reg [7:0] out_y,
 	output reg writeEn
 	);
-	
+	reg keep_going;
+	initial keep_going = 1;
+
 	reg [8:0] curx;
+	initial curx = 0;
+
 	reg [7:0] cury;
+	initial cury = 0;
 
 	always @(posedge clk) begin
 		if (!resetn) begin
-			curx <= 8'd0;
+			curx = 0;
+			cury = 0;
 		end
 		else begin
-			if (!loadx & !wen)
-				curx <= {1'b0, data_in};
+			if (keep_going) begin
+				curx = curx + 1;
+				if (curx == x_width) begin
+					curx = 0;
+					cury = cury + 1;
+					if (cury = y_length) begin
+						keep_going = 0;
+					end
+				end
+			end
 		end
 	end
 
-	always @(posedge clk) begin
-		if (!resetn) begin
-			out_x = 8'd0;
-			out_y = 7'd0;
-			writeEn = 1'b0;
-		end
-		else begin
-			cury <= data_in;
-			out_x = curx + adx;
-			out_y = cury + ady;
-			writeEn = wen;
-		end
-	end
+	assign out_x = in_x + curx;
+	assign out_y = in_y + cury;
+
 endmodule
 
 module block_dimensions(
