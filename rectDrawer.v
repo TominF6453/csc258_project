@@ -17,10 +17,11 @@ module rectDrawer(
 	
 	always @(posedge clock)
     begin
-		if (enable)
+		if (enable & ~done)
 			counter = counter + 1;
 			if (counter == limit)
 				counter = 0;
+				
     end
 	
 	assign done = (counter == limit);
