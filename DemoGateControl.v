@@ -1,5 +1,6 @@
 `include "AbstractGateControl.v"
 `include "AbstractConventionalTimer.do"
+
 module DemoGateControl(
 	input KEY[3:0],
 	input CLOCK_50,
@@ -20,6 +21,7 @@ module DemoGateControl(
 	
 	wire [7:0] selected_gate;
 	wire [7:0] current_gate;
+	wire timer_en;
 
 	AbstractGateControl DemoControl(
 		.in1(KEY[1]),
@@ -31,13 +33,10 @@ module DemoGateControl(
 		.outwire(LED[1]), // The output of the two inputs
 		.selected_gate(selected_gate), // The current gate the player has selected
 		.completed_gate(),
-		.timer_en(),
+		.timer_en(timer_en),
 		.vga_blankout(LED[0]),
 		.current_gate(current_gate)
 		)
-
-	
-
 
 	wire [3:0] selected_gate_4_bit;
 	oneHotToFourBit conv1(
@@ -48,6 +47,16 @@ module DemoGateControl(
 	oneHotToFourBit conv2(
 		.onehot(current_gate),
 		.fourbit(current_gate_4_bit));
+
+	AbstractConventionalTimer ActTimer(
+        .enable(timer_en),
+		.reset(),
+		.clock(CLOCK_50),
+    	.HEXfour(HEX4),
+    	.HEXthree(HEX3),
+    	.HEXtwo(HEX2),
+    	.HEXone(HEX1),
+    	.HEXzero(HEX0));
 
 
 	assign LED[9:6] = selected_gate_4_bit;
