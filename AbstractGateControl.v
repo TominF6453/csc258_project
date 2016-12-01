@@ -27,7 +27,7 @@ module AbstractGateControl(
 		if (selected_gate == 0)
 			selected_gate = 8'd1;
 		else
-			selected_gate << 1;
+			selected_gate = (selected_gate << 1);
 	end
 
 	always @(negedge confirm_select) begin
@@ -43,7 +43,7 @@ module AbstractGateControl(
 					completed_gate = completed_gate + (current_gate << 1);
 
 				if (&completed_gate)
-					timer_en = 0
+					timer_en = 0;
 				else begin
 					// Grab a new random gate to test, that hasn't already been completed.
 					while ( |{completed_gate & random_gate} ) 
@@ -56,7 +56,8 @@ module AbstractGateControl(
 
 	abstract_gate_selector GateInput(
 		.in({in1,in2}),
-		.selection(current_gate));
+		.selection(current_gate),
+		.gate_out(outwire));
 
 endmodule
 

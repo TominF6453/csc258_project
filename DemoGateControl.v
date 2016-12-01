@@ -1,27 +1,23 @@
 `include "AbstractGateControl.v"
-`include "AbstractConventionalTimer.do"
+`include "AbstractConventionalTimer.v"
 
 module DemoGateControl(
-	input KEY[3:0],
+	input [3:0] KEY,
 	input CLOCK_50,
 
-	output LED[9:0],
+	output [9:0] LEDR,
 
-	output HEX4[3:0],
-	output HEX3[3:0],
-	output HEX2[3:0],
-	output HEX1[3:0],
-	output HEX0[3:0],
+	output [6:0] HEX4,
+	output [6:0] HEX3,
+	output [6:0] HEX2,
+	output [6:0] HEX1,
+	output [6:0] HEX0,
 
-	output reg [7:0] selected_gate, // The current gate the player has selected
-	output reg [8:0] completed_gate, // The gates the player has completed
-	output reg timer_en, // Enabling the timer, starts after hitting
+	output [7:0] selected_gate, // The current gate the player has selected
+	output [8:0] completed_gate, // The gates the player has completed
+	output timer_en, // Enabling the timer, starts after hitting
 	output reg vga_blankout, // Blank out the VGA temporarily when a player misses
-	output reg [7:0] current_gate);
-	
-	wire [7:0] selected_gate;
-	wire [7:0] current_gate;
-	wire timer_en;
+	output [7:0] current_gate);
 
 	AbstractGateControl DemoControl(
 		.in1(KEY[1]),
@@ -30,22 +26,22 @@ module DemoGateControl(
 		.confirm_select(KEY[3]),
 		.clk(CLOCK_50),
 
-		.outwire(LED[1]), // The output of the two inputs
+		.outwire(LEDR[1]), // The output of the two inputs
 		.selected_gate(selected_gate), // The current gate the player has selected
-		.completed_gate(),
+		.completed_gate(completed_gate),
 		.timer_en(timer_en),
-		.vga_blankout(LED[0]),
+		.vga_blankout(LEDR[0]),
 		.current_gate(current_gate)
-		)
+		);
 
 	wire [3:0] selected_gate_4_bit;
 	oneHotToFourBit conv1(
-		.onehot(selected_gate),
+		.onehot({1'b0, selected_gate}),
 		.fourbit(selected_gate_4_bit));
 
 	wire [3:0] current_gate_4_bit;
 	oneHotToFourBit conv2(
-		.onehot(current_gate),
+		.onehot({1'b0, current_gate}),
 		.fourbit(current_gate_4_bit));
 
 	AbstractConventionalTimer ActTimer(
@@ -56,18 +52,17 @@ module DemoGateControl(
     	.HEXthree(HEX3),
     	.HEXtwo(HEX2),
     	.HEXone(HEX1),
-    	.HEXzero(HEX0));
+    	.HEXzero(HEX0),
+		.out_pulse());
 
 
-	assign LED[9:6] = selected_gate_4_bit;
-	assign LED[5:2] = completed_gate_4_bit;
-
-
+	assign LEDR[9:6] = selected_gate_4_bit;
+	assign LEDR[5:2] = current_gate_4_bit;
 endmodule
 
 module oneHotToFourBit(
 	input [8:0] onehot,
-	output [3:0] fourbit);
+	output reg [3:0] fourbit);
 
 	always @(*) begin
 		case(onehot)
@@ -102,5 +97,5 @@ module oneHotToFourBit(
 				fourbit = 4'h0;
 			end
 		endcase
-
+	end
 endmodule
