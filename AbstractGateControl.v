@@ -1,21 +1,20 @@
 `include "randomGen.v"
 
 module AbstractGateControl(
-	input in1; // Top wire [KEY[1]]
-	input in2; // Bottom wire [KEY[0]]
-	input switch_select; // Switch selection between gates [KEY[2]]
-	input confirm_select; // Confirm selection of gate [KEY[3]]
+	input in1, // Top wire [KEY[1]]
+	input in2, // Bottom wire [KEY[0]]
+	input switch_select, // Switch selection between gates [KEY[2]]
+	input confirm_select, // Confirm selection of gate [KEY[3]]
 
-	input clk; // CLOCK_50
+	input clk, // CLOCK_50
 
-	output outwire; // The output of the two inputs
-	output reg [7:0] selected_gate; // The current gate the player has selected
-	output reg [8:0] completed_gate; // The gates the player has completed
-	output reg timer_en; // Enabling the timer, starts after hitting
-	output reg vga_blankout; // Blank out the VGA temporarily when a player misses
-	);
+	output outwire, // The output of the two inputs
+	output reg [7:0] selected_gate, // The current gate the player has selected
+	output reg [8:0] completed_gate, // The gates the player has completed
+	output reg timer_en, // Enabling the timer, starts after hitting
+	output reg vga_blankout, // Blank out the VGA temporarily when a player misses
+	output reg [7:0] current_gate);
 
-	reg [7:0] current_gate;
 	wire [8:0] random_gate;
 
 	randomGen generator(
