@@ -1,3 +1,4 @@
+// This module was not written by us, it's the module on the website.
 module hex_decoder(
     input [3:0] hex_digit, 
     output reg [6:0] segments);
