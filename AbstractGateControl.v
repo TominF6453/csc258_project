@@ -10,12 +10,12 @@ module AbstractGateControl(
 
 	output outwire; // The output of the two inputs
 	output reg [7:0] selected_gate; // The current gate the player has selected
+	output reg [8:0] completed_gate; // The gates the player has completed
 	output reg timer_en; // Enabling the timer, starts after hitting
 	output reg vga_blankout; // Blank out the VGA temporarily when a player misses
 	);
 
 	reg [7:0] current_gate;
-	reg [8:0] completed_gate;
 	wire [8:0] random_gate;
 
 	randomGen generator(
@@ -42,9 +42,14 @@ module AbstractGateControl(
 					completed_gate = completed_gate + 1;
 				else
 					completed_gate = completed_gate + (current_gate << 1);
-				// Grab a new random gate to test, that hasn't already been completed.
-				while ( |{completed_gate & random_gate} ) 
-					current_gate = random_gate[8:1];
+
+				if (&completed_gate)
+					timer_en = 0
+				else begin
+					// Grab a new random gate to test, that hasn't already been completed.
+					while ( |{completed_gate & random_gate} ) 
+						current_gate = random_gate[8:1];
+				end
 			end else
 				vga_blankout = 1;
 		end
