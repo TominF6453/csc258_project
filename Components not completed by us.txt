@@ -1,0 +1,3 @@
+Components not completed by us
+	VGA adapter code
+	hex_decoder.v
